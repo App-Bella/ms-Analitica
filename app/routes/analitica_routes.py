@@ -1,5 +1,10 @@
 from flask import Blueprint, request, jsonify
-from app.models.metrica_model import guardar_metrica, obtener_metricas
+from app.models.metrica_model import (
+    guardar_metrica,
+    obtener_metricas,
+    obtener_resumen_financiero,
+    obtener_concurrencia
+)
 
 analitica_bp = Blueprint('analitica', __name__)
 
@@ -13,3 +18,13 @@ def crear_metrica():
 def listar_metricas():
     metricas = obtener_metricas()
     return jsonify(metricas), 200
+
+@analitica_bp.route('/financiero', methods=['GET'])
+def resumen_financiero():
+    resumen = obtener_resumen_financiero()
+    return jsonify(resumen), 200
+
+@analitica_bp.route('/concurrencia', methods=['GET'])
+def reporte_concurrencia():
+    concurrencia = obtener_concurrencia()
+    return jsonify(concurrencia), 200
