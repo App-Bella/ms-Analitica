@@ -26,13 +26,17 @@ def obtener_resumen_financiero():
     return [{"categoria": r["_id"], "total": r["total"]} for r in resultado]
 
 def obtener_concurrencia():
-    """Cuenta cuantas veces aparece cada servicio (RF-AN-02)"""
+    """Cuenta cuantas veces aparece cada servicio y suma su valor si existe (RF-AN-02)"""
     pipeline = [
         {"$group": {
             "_id": "$servicio",
-            "cantidad": {"$sum": 1}
+            "cantidad": {"$sum": 1},
+            "valor_total": {"$sum": {"$ifNull": ["$valor", 0]}}
         }},
         {"$sort": {"cantidad": -1}}
     ]
     resultado = list(metricas_collection.aggregate(pipeline))
-    return [{"servicio": r["_id"], "cantidad": r["cantidad"]} for r in resultado]
+    return [
+        {"servicio": r["_id"], "cantidad": r["cantidad"], "valor_total": r["valor_total"]}
+        for r in resultado
+    ]
